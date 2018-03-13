@@ -1,0 +1,42 @@
+body {
+                background-image: url('https://i.imgur.com/102rQk1.jpg');
+                font-family: 'Raleway', sans-serif;
+                background-size: cover;
+            }
+            .container{
+                margin-top: 13%;
+                height: 250px;
+                opacity: 0.8;
+                border-radius: 8px;
+            }
+            #login img{
+                margin: 10px 0;
+            }
+            #login .center {
+                text-align: center;
+            }
+
+            #login .login {
+                max-width: 350px;
+                margin: 30px auto;
+            }
+
+            #login .login-form{
+            padding:0px 25px;
+            }
+            #login h1 {
+                margin-bottom: 15px;
+            }
+            #login span{
+                width: 25px;
+                height: 30px;
+            }
+            #login input{
+                height: 30px;
+            }
+            hr{
+                width: 200px;
+                border-top: 1px solid #f8f8f8;
+                border-bottom: 1px solid rgba(0,0,0,0.2);
+                margin: 0 auto;
+            }

@@ -1,0 +1,17 @@
+configparser
+flask
+flask-bootstrap
+flask-login
+flask-mail
+flask-migrate
+flask-sqlalchemy
+flask-wtf
+psycopg2
+pyjwt
+wtforms_components
+
+
+
+
+
+

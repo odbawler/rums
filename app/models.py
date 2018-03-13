@@ -1,6 +1,8 @@
-from app import db, login
+from app import db, login, app
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from time import time
+import jwt
 
 class Employee(UserMixin, db.Model):
     employee_id = db.Column(db.Integer, primary_key=True)
@@ -30,6 +32,20 @@ class Employee(UserMixin, db.Model):
     def check_admin(self):
         return self.is_admin
 
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.employee_id, 'exp': time() + expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return Employee.query.get(id)
+
     def __repr__(self):
         return '<employee {}>'.format(self.username)
 
@@ -37,35 +53,35 @@ class Employee(UserMixin, db.Model):
 def load_employee(id):
     return Employee.query.get(int(id))
 
-class employee_time(db.Model):
+class EmployeeTime(db.Model):
     employee_time_id = db.Column(db.Integer, primary_key=True)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.employee_id'))
     weekly_hours = db.Column(db.Numeric)
     flexi_total = db.Column(db.Numeric)
 
     def __repr__(self):
-        return '<employee_time {}>'.format(self.body)
+        return '<employee_time {}>'.format(self.flexi_total)
 
-class time_record(db.Model):
+class TimeRecord(db.Model):
     time_record_id = db.Column(db.Integer, primary_key=True)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.employee_id'))
     date = db.Column(db.Date)
-    start_time = db.Column(db.Time)
-    end_time = db.Column(db.Time)
-    break_time = db.Column(db.Time)
-    time_worked = db.Column(db.Time)
+    start_time = db.Column(db.Time, nullable=True)
+    end_time = db.Column(db.Time, nullable=True)
+    break_time = db.Column(db.Time, nullable=True)
+    time_worked = db.Column(db.Time, nullable=True)
 
     def __repr__(self):
-        return '<time_record {}>'.format(self.body)
+        return '<time_record {}>'.format(self.date)
 
-class line_manager (db.Model):
+class LineManager (db.Model):
     line_manager_id = db.Column(db.Integer, primary_key=True)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.employee_id'))
 
     def __repr__(self):
-        return '<line_manager {}>'.format(self.body)
+        return '<line_manager {}>'.format(self.line_manager_id)
 
-class leave_request (db.Model):
+class LeaveRequest (db.Model):
     leave_request_id = db.Column(db.Integer, primary_key=True)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.employee_id'))
     request_type = db.Column(db.String)
@@ -74,4 +90,4 @@ class leave_request (db.Model):
     status = db.Column(db.String)
 
     def __repr__(self):
-        return '<leave_request {}>'.format(self.body)
+        return '<leave_request {}>'.format(self.status)
