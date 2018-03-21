@@ -1,0 +1,84 @@
+from flask import render_template, flash, redirect, url_for, request
+from flask_login import login_user, logout_user, current_user, login_required
+from werkzeug.urls import url_parse
+from app.authentication.email import send_password_reset_email
+from app.authentication import bp
+from datetime import datetime, timedelta, date, time
+from app import db
+from app.authentication.forms import LoginForm, RegisterEmployeeForm, ResetPasswordRequestForm, PasswordResetForm
+from app.models import Employee, TimeRecord
+
+@bp.route('/login', methods=['GET', 'POST'])
+def login():
+    #if user is already logged in, redirect to index page (dont show login form again)
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        employee = Employee.query.filter_by(username=form.username.data).first()
+        # Check employee is in the DB and password is correct
+        if employee is None or not employee.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('authentication.login'))
+        login_user(employee, remember=form.remember_me.data)
+        next_page = request.args.get('next')
+        # Check netloc to ensure url is relative to prevent redirection to external site
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('main.index')
+        return redirect(next_page)
+    return render_template('authentication/login.html', title='Sign In', form=form)
+
+@bp.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('main.index'))
+
+@bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    form = RegisterEmployeeForm()
+    if form.validate_on_submit():
+        # If this is the first registered user, give them admin priveldges
+        is_first_user = len(Employee.query.all())
+        admin = 'n'
+        if is_first_user == 0:
+            admin = 'y'
+        # Add new employee to database
+        newemployee = Employee(name=form.name.data, username=form.username.data, email=form.email.data, is_admin=admin)
+        newemployee.set_password(form.password.data)
+        db.session.add(newemployee)
+        db.session.commit()
+        flash('User Registered')
+        return redirect(url_for('authentication.login'))
+    return render_template('authentication/register.html', title='Register', form=form)
+
+@bp.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = Employee.query.filter_by(email=form.email.data).first()
+        if user:
+            send_password_reset_email(user)
+        # Whether user is in DB or not, flash sent message to prevent malicious use to find users
+        flash('Check your email for the instructions to reset your password')
+        return redirect(url_for('main.login'))
+    return render_template('authentication/password_reset_request.html',
+                           title='Password Reset', form=form)
+
+@bp.route('/reset_password/<token>', methods=['GET', 'POST'])
+def password_reset(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    user = Employee.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for('main.index'))
+    form = PasswordResetForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Your password has been reset.')
+        return redirect(url_for('authentication.login'))
+    return render_template('authentication/password_reset.html', form=form)
