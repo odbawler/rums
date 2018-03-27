@@ -22,7 +22,7 @@ def index():
         # Decalre date format
         date_fmt = '%Y-%m-%d'
         # Save today's datetime for checking for an existing time_record
-        today = datetime.strptime(str(datetime.today()), "%Y-%m-%d %H:%M:%S.%f")
+        #today = datetime.strptime(str(form.date.data), "%Y-%m-%d %H:%M:%S.%f")
         # Retrieve employee from db
         user = Employee.query.filter_by(username=current_user.username).first()
         # Retrieve a list of all time_records for an employee
@@ -30,7 +30,7 @@ def index():
         # If an employee has already clocked a time for today, update the existing time record
         for row in tr:
             if datetime.strptime(str(row.date), date_fmt) == datetime.strptime(
-            datetime.strftime(today, date_fmt), date_fmt):
+            datetime.strftime(form.date.data, date_fmt), date_fmt):
                 time_record = row
         # Create variables to hold clock entries, set to 00:00:00 if no entry so far
         start = time_record.start_time
@@ -67,7 +67,7 @@ def index():
             # Calculate worked time
             worked = calculate_time_worked(end, break_total, start, time_fmt)
             # Create new time_record and insert values
-            time = TimeRecord(employee_id=user.employee_id, date=datetime.today(), start_time=start,
+            time = TimeRecord(employee_id=user.employee_id, date=form.date.data, start_time=start,
                 break_time=break_total, end_time=end, time_worked=worked)
             # Add the new time record to the db session
             db.session.add(time)

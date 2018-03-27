@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
+from datetime import datetime
 from wtforms.validators import ValidationError, DataRequired, Email
-from wtforms_components import TimeField, SelectField
+from wtforms_components import TimeField, SelectField, DateField
 from app.models import Employee
 
 class EditProfileForm(FlaskForm):
@@ -29,4 +30,5 @@ class ClockForm(FlaskForm):
     clock_type = SelectField(choices=[('Clock-in', 'Clock-in'), ('Break', 'Break')
     ,('Clock-out', 'Clock-out')], validators=[DataRequired()])
     time = TimeField('Time')
+    date = DateField('Date', default=datetime.now())
     submit = SubmitField('Submit')

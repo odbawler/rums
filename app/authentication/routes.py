@@ -20,6 +20,8 @@ def login():
         if employee is None or not employee.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('authentication.login'))
+        # Log the user in with flask_login, remember_me=True creates a cookie to keep the user logged in
+        # if they close their browser without logging out
         login_user(employee, remember=form.remember_me.data)
         next_page = request.args.get('next')
         # Check netloc to ensure url is relative to prevent redirection to external site
@@ -35,8 +37,6 @@ def logout():
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
     form = RegisterEmployeeForm()
     if form.validate_on_submit():
         # If this is the first registered user, give them admin priveldges

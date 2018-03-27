@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block navbar %}
-    <nav class="navbar navbar-light" style="background-color: #ADBEC7;">
+    <nav class="navbar navbar-light" style="background-color: #D3E4ED">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -28,6 +28,9 @@
                     <li><a href="{{ url_for('authentication.login') }}">Login</a></li>
                     {% else %}
                     <li><a href="{{ url_for('authentication.logout') }}">Logout</a></li>
+                    {% endif %}
+                    {% if current_user.is_admin == 'y' %}
+                    <li><a href="{{ url_for('authentication.register') }}">Register User</a></p>
                     {% endif %}
                 </ul>
             </div>
