@@ -13,6 +13,7 @@ from app.main.functions import calculate_time_worked
 @login_required
 def index():
     form = ClockForm()
+    form.time.data = datetime.now()
     if form.validate_on_submit():
         # Begin with an empty time_record
         time_record = TimeRecord(employee_id='', date='', start_time ='00:00:00', break_time ='00:00:00',

@@ -29,6 +29,6 @@ class EditProfileForm(FlaskForm):
 class ClockForm(FlaskForm):
     clock_type = SelectField(choices=[('Clock-in', 'Clock-in'), ('Break', 'Break')
     ,('Clock-out', 'Clock-out')], validators=[DataRequired()])
-    time = TimeField('Time')
+    time = TimeField('Time', default=datetime.now())
     date = DateField('Date', default=datetime.now())
     submit = SubmitField('Submit')
