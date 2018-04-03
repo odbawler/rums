@@ -27,8 +27,12 @@ class EditProfileForm(FlaskForm):
                 raise ValidationError('Username is taken. Please choose a different username.')
 
 class ClockForm(FlaskForm):
-    clock_type = SelectField(choices=[('Clock-in', 'Clock-in'), ('Break', 'Break')
-    ,('Clock-out', 'Clock-out')], validators=[DataRequired()])
-    time = TimeField('Time', default=datetime.now())
+    clock_type = SelectField(choices=[('Clock-in', 'Clock-in'), ('Start-Break', 'Start-Break')
+    , ('End-Break', 'End-Break'), ('Clock-out', 'Clock-out')], validators=[DataRequired()])
+    time = TimeField('Time', default=datetime(1900,1,1,0,0,0))
     date = DateField('Date', default=datetime.now())
     submit = SubmitField('Submit')
+
+    def validate_date(self, date):
+        if date.data > datetime.now().date():
+            raise ValidationError('Cannot record time in the future.')

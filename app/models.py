@@ -68,7 +68,9 @@ class TimeRecord(db.Model):
     date = db.Column(db.Date)
     start_time = db.Column(db.Time, nullable=True)
     end_time = db.Column(db.Time, nullable=True)
-    break_time = db.Column(db.Time, nullable=True)
+    start_break = db.Column(db.Time, nullable=True)
+    end_break = db.Column(db.Time, nullable=True)
+    total_break = db.Column(db.Time, nullable=True)
     time_worked = db.Column(db.Time, nullable=True)
 
     def __repr__(self):
