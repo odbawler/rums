@@ -14,6 +14,13 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = LoginForm()
+    # Add admin account if it does not exist (first time startup)
+    anyaccounts = Employee.query.first()
+    if anyaccounts is None:
+        admin = Employee(username='admin', is_admin='y')
+        admin.set_password('admin')
+        db.session.add(admin)
+        db.session.commit()
     if form.validate_on_submit():
         employee = Employee.query.filter_by(username=form.username.data).first()
         # Check employee is in the DB and password is correct
