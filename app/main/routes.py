@@ -20,12 +20,8 @@ def index():
     dt = datetime.strptime('00:00:00', time_fmt).time()
     if form.validate_on_submit():
         # Begin with an empty time_record
-        time_record = TimeRecord(employee_id='', date='', start_time=dt,
-        end_time=dt,
-        start_break=dt,
+        time_record = TimeRecord(employee_id='', date='', start_time=dt, end_time=dt, start_break=dt,
         end_break=dt, total_break = '00:00:00')
-        # Save today's datetime for checking for an existing time_record
-        #today = datetime.strptime(str(form.date.data), "%Y-%m-%d %H:%M:%S.%f")
         # Retrieve employee from db
         user = Employee.query.filter_by(username=current_user.username).first()
         # Retrieve a list of all time_records for an employee

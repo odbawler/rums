@@ -36,22 +36,26 @@ def logout():
     return redirect(url_for('main.index'))
 
 @bp.route('/register', methods=['GET', 'POST'])
+@login_required
 def register():
-    form = RegisterEmployeeForm()
-    if form.validate_on_submit():
-        # If this is the first registered user, give them admin priveldges
-        is_first_user = len(Employee.query.all())
-        admin = 'n'
-        if is_first_user == 0:
-            admin = 'y'
-        # Add new employee to database
-        newemployee = Employee(name=form.name.data, username=form.username.data, email=form.email.data, is_admin=admin)
-        newemployee.set_password(form.password.data)
-        db.session.add(newemployee)
-        db.session.commit()
-        flash('User Registered')
-        return redirect(url_for('authentication.login'))
-    return render_template('authentication/register.html', title='Register', form=form)
+    if current_user.is_admin == 'y':
+        form = RegisterEmployeeForm()
+        if form.validate_on_submit():
+            # If this is the first registered user, give them admin priveldges
+            is_first_user = len(Employee.query.all())
+            admin = 'n'
+            if is_first_user == 0:
+                admin = 'y'
+            # Add new employee to database
+            newemployee = Employee(name=form.name.data, username=form.username.data, email=form.email.data, is_admin=admin)
+            newemployee.set_password(form.password.data)
+            db.session.add(newemployee)
+            db.session.commit()
+            flash('User Registered')
+            return redirect(url_for('authentication.login'))
+        return render_template('authentication/register.html', title='Register', form=form)
+    else:
+        return render_template('errors/404.html', title='Page Not Found')
 
 @bp.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
