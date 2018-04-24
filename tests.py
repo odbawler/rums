@@ -10,7 +10,7 @@ class TestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'postgres://localhost/'
 
-class EmployeeModelCase(unittest.TestCase):
+class EmployeeCreation(unittest.TestCase):
     def setUp(self):
         self.app = create_app(TestConfig)
         self.app_context = self.app.app_context()
@@ -30,6 +30,7 @@ class EmployeeModelCase(unittest.TestCase):
         self.assertFalse(e.check_password('joey124'))
         self.assertTrue(e.check_password('joey123'))
 
+class TimeCalculations
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

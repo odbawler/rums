@@ -24,14 +24,15 @@
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_admin == 'y' %}
+                    <li><a href="{{ url_for('authentication.register') }}">Register User</a></p>
+                    {% endif %}
                     {% if current_user.is_anonymous %}
                     <li><a href="{{ url_for('authentication.login') }}">Login</a></li>
                     {% else %}
                     <li><a href="{{ url_for('authentication.logout') }}">Logout</a></li>
                     {% endif %}
-                    {% if current_user.is_admin == 'y' %}
-                    <li><a href="{{ url_for('authentication.register') }}">Register User</a></p>
-                    {% endif %}
+
                 </ul>
             </div>
         </div>
@@ -39,17 +40,22 @@
 {% endblock %}
 
 {% block content %}
+
     <div class="container">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-info" role="alert">{{ message }}</div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+                {% if category == 'message' %}
+                  <div class="alert alert-info" role="alert">{{ message }}</div>
+                {% else %}
+                  <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+                {% endif %}
             {% endfor %}
-        {% endif %}
-        {% endwith %}
+          {% endif %}
+      {% endwith %}
 
-        {% block app_content %}
+      {% block app_content %}
 
-        {% endblock %}
+      {% endblock %}
     </div>
 {% endblock %}

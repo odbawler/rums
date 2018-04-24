@@ -6,11 +6,11 @@ from app.authentication import bp
 from datetime import datetime, timedelta, date, time
 from app import db
 from app.authentication.forms import LoginForm, RegisterEmployeeForm, ResetPasswordRequestForm, PasswordResetForm
-from app.models import Employee, TimeRecord
+from app.models import Employee, TimeRecord, EmployeeTime
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
-    #if user is already logged in, redirect to index page (dont show login form again)
+    #if user is already logged in, redirect to index page
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
     form = LoginForm()
@@ -20,6 +20,11 @@ def login():
         admin = Employee(username='admin', is_admin='y')
         admin.set_password('admin')
         db.session.add(admin)
+        db.session.commit()
+        # Commit admin account to db so we can retrieve the employee_id to enter into employee_time.
+        employeetime = EmployeeTime(employee_id = admin.get_id(), hours_a_week = 0,
+            hours_a_day = '00:00' , flexi = '00:00:00')
+        db.session.add(employeetime)
         db.session.commit()
     if form.validate_on_submit():
         employee = Employee.query.filter_by(username=form.username.data).first()
@@ -57,6 +62,18 @@ def register():
             newemployee = Employee(name=form.name.data, username=form.username.data, email=form.email.data, is_admin=admin)
             newemployee.set_password(form.password.data)
             db.session.add(newemployee)
+            db.session.commit()
+            float_hours = float(form.hours.data)
+            # Based on employees working 5 days a week
+            # Get hours per day
+            hours = int(float_hours / 5)
+            # Calculate minutes part of datetime
+            minutes = int(((float_hours / 5) * 60) % 60)
+            # Create datetime object to hold daily hours/time required per day
+            hours = datetime(1900, 1, 1, hours, minutes)
+            employeetime = EmployeeTime(employee_id = newemployee.get_id(), hours_a_week = form.hours.data,
+             hours_a_day = hours.time(), flexi = '00:00:00', last_updated = datetime.now())
+            db.session.add(employeetime)
             db.session.commit()
             flash('User Registered')
             return redirect(url_for('authentication.login'))

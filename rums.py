@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models import Employee
+from app.models import Employee, EmployeeTime, TimeRecord
 
 app = create_app()
 

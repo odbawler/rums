@@ -2,15 +2,46 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <meta http-equiv="refresh" content="60">  
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
     <link rel="stylesheet" type="text/css" href="static/style.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+        $(document).ready(function() {
+          $('a#flexi').bind('click', function(e) {
+            // prevent form submitting when clicking update flexi button
+            e.preventDefault()
+            $.getJSON('/update_flexi/{{ current_user.employee_id }}',
+              function(data) {
+            });
+            // Introduce small wait time to prevent broken pipe error
+            setTimeout(function(){location.reload();},300);
+          });
+        });
+</script>
 
     <h1>Hi, {{ current_user.username }}!</h1>
     <div class="row">
         <div class="col-md-4">
             {{ wtf.quick_form(form) }}
+        </div>
+        <div class="col-md-4">
+            <br>
+            <p align="justify">1. Choose a clock entry from the drop down list.</p>
+            </br>
+            <p align="justify">2. Enter the time you wish to record in the box in 24 hour format.</p>
+            <p align="justify">NOTE: If you wish to enter the current time, leave the default time
+               in the box as '00:00'.</p>
+            <p align="justify">3. To record for today, leave the date as it is. If you would like to
+               enter a time for another day or correct a previously entered time, just choose the
+                relevant date.</p>
+        </div>
+        <div class='container'>
+            <form>
+                <a href=# id=flexi><button class='btn btn-default'>Update Flexi</button></a>
+                <p> Flexi: {{flexi}} </p>
+            </form>
+
         </div>
 
 

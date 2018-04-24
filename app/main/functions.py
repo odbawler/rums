@@ -1,4 +1,4 @@
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 
 
 def calculate_time_worked(end, break_total, start, time_fmt):
@@ -13,3 +13,10 @@ def calculate_time_worked(end, break_total, start, time_fmt):
 def calculate_break_time(start_break, end_break, time_fmt):
     break_total = datetime.strptime(str(end_break), time_fmt) - datetime.strptime(str(start_break), time_fmt)
     return break_total
+
+def format_timedelta(td):
+    seconds = td.total_seconds()
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    str = '{}:{}'.format(int(hours), int(minutes))
+    return str

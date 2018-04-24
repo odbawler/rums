@@ -2,6 +2,7 @@ from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from time import time
+from sqlalchemy import DateTime
 import jwt
 
 class Employee(UserMixin, db.Model):
@@ -56,8 +57,10 @@ def load_employee(id):
 class EmployeeTime(db.Model):
     employee_time_id = db.Column(db.Integer, primary_key=True)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.employee_id'))
-    weekly_hours = db.Column(db.Numeric)
-    flexi_total = db.Column(db.Numeric)
+    hours_a_week = db.Column(db.Numeric)
+    hours_a_day = db.Column(db.Time)
+    flexi = db.Column(db.String)
+    last_updated = db.Column(DateTime)
 
     def __repr__(self):
         return '<employee_time {}>'.format(self.flexi_total)
