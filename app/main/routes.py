@@ -98,6 +98,8 @@ def index():
 
                 # Set time_worked column in db object
                 time_record.time_worked = worked
+                print('time worked in time record')
+                print(time_record.time_worked)
 
                 # Set total_break in db
                 time_record.total_break = break_total
@@ -159,6 +161,8 @@ def update_flexi(variable):
         user = Employee.query.filter_by(username=current_user.username).first()
         et = EmployeeTime.query.filter_by(employee_id=variable).first()
         trs = TimeRecord.query.filter_by(employee_id=variable).all()
+        print('trs')
+        print(trs)
         now = datetime.today()
         delay = timedelta(minutes=5)
         base_time = datetime.strptime('00:00:00', '%H:%M:%S').time()
@@ -180,7 +184,7 @@ def update_flexi(variable):
                 # Print out values as they are manipulated in case of investigation
                 print("expected hours")
                 print(daily_hrs_delta)
-                print("worked hhours")
+                print("worked hours")
                 print(worked_hrs_delta)
 
                 # Retrieve current flexi value
