@@ -176,7 +176,9 @@ def update_flexi(variable):
         # hrs to add per working day
         daily_hrs_time = datetime.combine(date.min, et.hours_a_day) - datetime.min
         for row in trs:
+            print('this many rows')
             if row.date >= et.last_updated.date():
+                print('this many rows after or on last_updated date')
                 # total expected hours since last update
                 daily_hrs_delta += daily_hrs_time
                 # total worked hours since last update
@@ -226,11 +228,16 @@ def update_flexi(variable):
 
                 for row in trs:
                     if row.date >= et.last_updated.date():
+                        print('this many rows after or on last_updated date')
                         # total expected hours since last update
                         daily_hrs_delta += daily_hrs_time
+                        print('adding daily hours')
+                        print(daily_hrs_time)
                         # total worked hours since last update
                         time_worked_delta = datetime.combine(date.min, row.time_worked) - datetime.min
                         worked_hrs_delta += time_worked_delta
+                        print('adding worked hours')
+                        print(time_worked_delta)
 
                 print("expected hours")
                 print(daily_hrs_delta)
