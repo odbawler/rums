@@ -68,7 +68,7 @@ def index():
                     start = time_to_rec
                 elif form.clock_type.data == 'Start-Break':
                     time_record.start_break = time_to_rec
-                    break_start = form.time.data
+                    break_start = time_to_rec
                 elif form.clock_type.data == 'End-Break':
                     # Cannot end break before starting break
                     if str(time_record.start_break) == '00:00:00':
@@ -78,14 +78,15 @@ def index():
                     if time_to_rec < time_record.start_break:
                         return redirect(url_for('main.index')), flash("Cannot end break before start of break!", 'danger')
                     time_record.end_break = time_to_rec
-                    break_end = form.time.data
+                    break_end = time_to_rec
                 elif form.clock_type.data == 'Clock-out':
+                    print(time_record.)
                     time_record.end_time = time_to_rec
-                    end = form.time.data
+                    end = time_to_rec
 
                 # Calculate break total
                 break_total = calculate_break_time(break_start, break_end, time_fmt)
-
+                # this shoule be str()? test after end problem
                 if(time_record.start_time != dt and
                   time_record.end_time != dt):
                     print("calcualting time worked")
