@@ -49,6 +49,8 @@ def index():
             # If the user wants to record a the current time, we use this formatted datetime.now().time() (no ms)
             format_now = str(datetime.now().time())
             time_to_rec = datetime.strptime(format_now.split(".")[0], time_fmt).time()
+            print('datetime now:')
+            print(time_to_rec)
 
             # If the user wants the current time, the time data will be left at midnight.
             # Use this check to determine whether to use the timefield data or the datetime.now().time()
