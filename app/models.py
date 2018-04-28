@@ -39,10 +39,10 @@ class Employee(UserMixin, db.Model):
             current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
     def validate_phone(form, phone_number):
-    if len(phone_number.data) > 11:
-        raise ValidationError('Phone number is too long.')
-    if phone_number.data[0] != '0' or phone_number.data[1] != '7':
-        raise ValidationError('Phone number is invalid.')
+        if len(phone_number.data) > 11:
+            raise ValidationError('Phone number is too long.')
+        if phone_number.data[0] != '0' or phone_number.data[1] != '7':
+            raise ValidationError('Phone number is invalid.')
 
     @staticmethod
     def verify_reset_password_token(token):
