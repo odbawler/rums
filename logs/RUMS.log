@@ -1,0 +1,76 @@
+2018-04-23 15:39:08,096 ERROR: Exception on /login [GET] [in /Library/Python/2.7/site-packages/flask/app.py:1560]
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1982, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1614, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1517, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1612, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1598, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/User1/Documents/Proj/rums/app/authentication/routes.py", line 24, in login
+    hours_a_day = time.strptime("30 Nov 00", "%d %b %y") , flexi = datetime.strptime('00:00:00', '%H:%M:%S').time())
+AttributeError: type object 'datetime.time' has no attribute 'strptime'
+2018-04-23 15:39:32,947 ERROR: Exception on /login [GET] [in /Library/Python/2.7/site-packages/flask/app.py:1560]
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1982, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1614, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1517, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1612, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1598, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/User1/Documents/Proj/rums/app/authentication/routes.py", line 24, in login
+    hours_a_day = time.min() , flexi = datetime.strptime('00:00:00', '%H:%M:%S').time())
+AttributeError: type object 'datetime.time' has no attribute 'strptime'
+2018-04-23 15:39:39,518 INFO: RUMS startup [in /Users/User1/Documents/Proj/rums/app/__init__.py:67]
+2018-04-23 15:39:41,750 ERROR: Exception on /login [GET] [in /Library/Python/2.7/site-packages/flask/app.py:1560]
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1982, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1614, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1517, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1612, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1598, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/User1/Documents/Proj/rums/app/authentication/routes.py", line 24, in login
+    hours_a_day = time.min() , flexi = datetime.strptime('00:00:00', '%H:%M:%S').time())
+TypeError: 'datetime.time' object is not callable
+2018-04-23 15:40:03,982 ERROR: Exception on /login [GET] [in /Library/Python/2.7/site-packages/flask/app.py:1560]
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1982, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1614, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1517, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1612, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1598, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/User1/Documents/Proj/rums/app/authentication/routes.py", line 24, in login
+    hours_a_day = time.min() , flexi = datetime.strptime('00:00:00', '%H:%M:%S').time())
+TypeError: 'datetime.time' object is not callable
+2018-04-23 15:40:08,231 ERROR: Exception on /login [GET] [in /Library/Python/2.7/site-packages/flask/app.py:1560]
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1982, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1614, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1517, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1612, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Library/Python/2.7/site-packages/flask/app.py", line 1598, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/User1/Documents/Proj/rums/app/authentication/routes.py", line 24, in login
+    hours_a_day = '00:00' , flexi = datetime.strptime('00:00:00', '%H:%M:%S').time())
+TypeError: 'datetime.time' object is not callable
