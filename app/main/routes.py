@@ -49,16 +49,11 @@ def index():
             # If the user wants to record a the current time, we use this formatted datetime.now().time() (no ms)
             format_now = str(datetime.now().time())
             time_to_rec = datetime.strptime(format_now.split(".")[0], time_fmt).time()
-            print('datetime now:')
-            print(time_to_rec)
 
             # If the user wants the current time, the time data will be left at midnight.
             # Use this check to determine whether to use the timefield data or the datetime.now().time()
             if str(form.time.data) != '00:00:00':
-                print('this should not print')
                 time_to_rec = form.time.data
-            print('auto current time:')
-            print(time_to_rec)
 
             # If there is a current time_record open for this employee,
             # confirm which clocking type the user has entered, and update the relevant time entry
@@ -83,8 +78,10 @@ def index():
                     time_record.end_time = time_to_rec
                     end = time_to_rec
 
-                # Calculate break total
-                break_total = calculate_break_time(break_start, break_end, time_fmt)
+                # Calculate break total if both break times are recorded
+                if(time_record.start_break != dt and
+                  time_record.end_break != dt):
+                  break_total = calculate_break_time(break_start, break_end, time_fmt)
                 # this shoule be str()? test after end problem
                 if(time_record.start_time != dt and
                   time_record.end_time != dt):
@@ -135,8 +132,10 @@ def index():
                 elif form.clock_type.data == 'Clock-out':
                     end = time_to_rec
 
-                # Calculate break total
-                break_total = calculate_break_time(break_start, break_end, time_fmt)
+                # Calculate break total if both break times are recorded
+                if(time_record.start_break != dt and
+                  time_record.end_break != dt):
+                  break_total = calculate_break_time(break_start, break_end, time_fmt)
 
                 time = TimeRecord(employee_id=user.employee_id, date=form.date.data, start_time=start,
                  end_time=end, start_break=break_start, end_break=break_end, total_break=break_total, time_worked=dt)
@@ -176,14 +175,13 @@ def update_flexi(variable):
         # hrs to add per working day
         daily_hrs_time = datetime.combine(date.min, et.hours_a_day) - datetime.min
         for row in trs:
-            print('this many rows')
             if row.date >= et.last_updated.date():
-                print('this many rows after or on last_updated date')
                 # total expected hours since last update
                 daily_hrs_delta += daily_hrs_time
                 # total worked hours since last update
                 time_worked_delta = datetime.combine(date.min, row.time_worked) - datetime.min
                 worked_hrs_delta += time_worked_delta
+
         # Implement 5 minute cooldown period for refreshing flexi
         if now - et.last_updated > delay:
             # If daily hrs have already been applied today, do not add them again
@@ -229,16 +227,12 @@ def update_flexi(variable):
                 daily_delta = datetime.combine(date.min, base_time) - datetime.min
                 for row in trs:
                     if row.date >= et.last_updated.date():
-                        print('this many rows after or on last_updated date')
                         # total expected hours since last update
                         daily_delta += daily_hrs_time
-                        print('adding daily hours')
-                        print(daily_hrs_time)
+
                         # total worked hours since last update
                         time_worked_delta = datetime.combine(date.min, row.time_worked) - datetime.min
                         worked_delta += time_worked_delta
-                        print('adding worked hours')
-                        print(time_worked_delta)
 
                 print("expected hours")
                 print(daily_delta)
