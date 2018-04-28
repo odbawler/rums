@@ -18,6 +18,9 @@ def index():
     # Decalre date format
     date_fmt = '%Y-%m-%d'
     dt = datetime.strptime('00:00:00', time_fmt).time()
+    delta = timedelta(hours=0,minutes=0,seconds=0)
+    print('delta')
+    print(delta)
     et = EmployeeTime.query.filter_by(employee_id=current_user.employee_id).first()
     if form.validate_on_submit():
         # Prevent recording time in the future (for the same day)
@@ -79,7 +82,7 @@ def index():
                     end = time_to_rec
 
                 # Calculate break total if both break times are recorded
-                break_total = dt
+                break_total = delta
                 if(time_record.start_break != dt and
                   time_record.end_break != dt):
                   break_total = calculate_break_time(break_start, break_end, time_fmt)
@@ -134,7 +137,7 @@ def index():
                     end = time_to_rec
 
                 # Calculate break total if both break times are recorded
-                break_total = dt
+                break_total = delta
                 if(time_record.start_break != dt and
                   time_record.end_break != dt):
                   break_total = calculate_break_time(break_start, break_end, time_fmt)
