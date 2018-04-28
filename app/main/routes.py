@@ -55,7 +55,10 @@ def index():
             # If the user wants the current time, the time data will be left at midnight.
             # Use this check to determine whether to use the timefield data or the datetime.now().time()
             if str(form.time.data) != '00:00:00':
+                print('this should not print')
                 time_to_rec = form.time.data
+            print('auto current time:')
+            print(time_to_rec)
 
             # If there is a current time_record open for this employee,
             # confirm which clocking type the user has entered, and update the relevant time entry
@@ -88,6 +91,8 @@ def index():
                     print("calcualting time worked")
                     # We can send the start time as datetime or datetime.time due to the auto/manual time entering routes.
                     # To deal with this -- if we have a datetime, we send only the .time() element
+                    print('end time')
+                    print(end)
                     if isinstance(start, datetime):
                         worked = calculate_time_worked(end, break_total, start.time(), time_fmt)
                     else:
