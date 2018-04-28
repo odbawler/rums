@@ -230,19 +230,19 @@ def update_flexi(variable):
                     if row.date >= et.last_updated.date():
                         print('this many rows after or on last_updated date')
                         # total expected hours since last update
-                        daily_hrs_delta += daily_hrs_time
+                        daily_delta += daily_hrs_time
                         print('adding daily hours')
                         print(daily_hrs_time)
                         # total worked hours since last update
                         time_worked_delta = datetime.combine(date.min, row.time_worked) - datetime.min
-                        worked_hrs_delta += time_worked_delta
+                        worked_delta += time_worked_delta
                         print('adding worked hours')
                         print(time_worked_delta)
 
                 print("expected hours")
-                print(daily_hrs_delta)
+                print(daily_delta)
                 print("worked hhours")
-                print(worked_hrs_delta)
+                print(worked_delta)
 
                 # Retrieve current flexi value
                 current_flexi = et.flexi
@@ -250,12 +250,12 @@ def update_flexi(variable):
                 print(current_flexi)
 
                 # Subtract accumulated daily working hours
-                subtracted_flexi = subtract_daily_hrs(current_flexi, format_timedelta(daily_hrs_delta))
+                subtracted_flexi = subtract_daily_hrs(current_flexi, format_timedelta(daily_delta))
                 print("flexi - expected hours")
                 print(subtracted_flexi)
 
                 # Add total worked hours
-                calculated_flexi = add_worked_hrs(subtracted_flexi, format_timedelta(worked_hrs_delta))
+                calculated_flexi = add_worked_hrs(subtracted_flexi, format_timedelta(worked_delta))
                 print("flexi + worked hours")
                 print(calculated_flexi)
 
