@@ -92,8 +92,6 @@ def index():
                     print("calcualting time worked")
                     # We can send the start time as datetime or datetime.time due to the auto/manual time entering routes.
                     # To deal with this -- if we have a datetime, we send only the .time() element
-                    print('end time')
-                    print(end)
                     if isinstance(start, datetime):
                         worked = calculate_time_worked(end, break_total, start.time(), time_fmt)
                     else:
@@ -104,8 +102,6 @@ def index():
 
                 # Set time_worked column in db object
                 time_record.time_worked = worked
-                print('time worked in time record')
-                print(time_record.time_worked)
 
                 # Set total_break in db
                 time_record.total_break = break_total
@@ -225,8 +221,6 @@ def update_flexi(variable):
             else:
                 # for clocking corrections calculate from beginning of time_records
                 et.last_updated = datetime(2018, 1, 1, 0, 0, 0, 0)
-                print('last updated')
-                print(et.last_updated)
                 et.flexi = '00:00'
                 worked_delta = datetime.combine(date.min, base_time) - datetime.min
                 daily_delta = datetime.combine(date.min, base_time) - datetime.min
