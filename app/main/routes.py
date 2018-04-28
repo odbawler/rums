@@ -299,8 +299,8 @@ def edit_profile():
         current_user.postcode = form.postcode.data
         # Validate UK phone number is 11 charcters long and begins with '07'
         if len(form.phone_number.data) != 11:
-            return redirect(url_for('main.edit_profile')), flash("Phone number is too long.", 'danger')
-        if phone_number.data[0] != '0' or phone_number.data[1] != '7':
+            return redirect(url_for('main.edit_profile')), flash("Phone number is wrong length.", 'danger')
+        if form.phone_number.data[0] != '0' or form.phone_number.data[1] != '7':
             return redirect(url_for('main.edit_profile')), flash("Phone number is invalid.", 'danger')
         current_user.phone_number = form.phone_number.data
         db.session.commit()
