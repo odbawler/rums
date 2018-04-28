@@ -293,7 +293,15 @@ def edit_profile():
         current_user.address1 = form.address1.data
         current_user.address2 = form.address2.data
         current_user.address3 = form.address3.data
+        # Validate post code is no longer than 7 chars (allow for space eg . PL4 888 - PL4888)
+        if len(form.postcode.data) > 7:
+            return redirect(url_for('main.edit_profile')), flash("Postcode is too long.", 'danger')
         current_user.postcode = form.postcode.data
+        # Validate UK phone number is 11 charcters long and begins with '07'
+        if len(form.phone_number.data) != 11:
+            return redirect(url_for('main.edit_profile')), flash("Phone number is too long.", 'danger')
+        if phone_number.data[0] != '0' or phone_number.data[1] != '7':
+            return redirect(url_for('main.edit_profile')), flash("Phone number is invalid.", 'danger')
         current_user.phone_number = form.phone_number.data
         db.session.commit()
         flash('Your changes have been saved.')

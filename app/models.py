@@ -14,7 +14,7 @@ class Employee(UserMixin, db.Model):
     address1 = db.Column(db.String)
     address2 = db.Column(db.String)
     address3 = db.Column(db.String)
-    postcode = db.Column(db.String(7))
+    postcode = db.Column(db.String)
     phone_number = db.Column(db.String)
     date_of_birth = db.Column(db.Date)
     line_manager_id = db.Column(db.Integer)
@@ -37,12 +37,6 @@ class Employee(UserMixin, db.Model):
         return jwt.encode(
             {'reset_password': self.employee_id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
-
-    def validate_phone(form, phone_number):
-        if len(phone_number.data) > 11:
-            raise ValidationError('Phone number is too long.')
-        if phone_number.data[0] != '0' or phone_number.data[1] != '7':
-            raise ValidationError('Phone number is invalid.')
 
     @staticmethod
     def verify_reset_password_token(token):
