@@ -80,7 +80,6 @@ def index():
                     time_record.end_break = time_to_rec
                     break_end = time_to_rec
                 elif form.clock_type.data == 'Clock-out':
-                    print(time_record.)
                     time_record.end_time = time_to_rec
                     end = time_to_rec
 
