@@ -225,7 +225,8 @@ def update_flexi(variable):
                 print('last updated')
                 print(et.last_updated)
                 et.flexi = '00:00'
-
+                worked_delta = datetime.combine(date.min, base_time) - datetime.min
+                daily_delta = datetime.combine(date.min, base_time) - datetime.min
                 for row in trs:
                     if row.date >= et.last_updated.date():
                         print('this many rows after or on last_updated date')
