@@ -79,6 +79,7 @@ def index():
                     end = time_to_rec
 
                 # Calculate break total if both break times are recorded
+                break_total = dt
                 if(time_record.start_break != dt and
                   time_record.end_break != dt):
                   break_total = calculate_break_time(break_start, break_end, time_fmt)
@@ -133,6 +134,7 @@ def index():
                     end = time_to_rec
 
                 # Calculate break total if both break times are recorded
+                break_total = dt
                 if(time_record.start_break != dt and
                   time_record.end_break != dt):
                   break_total = calculate_break_time(break_start, break_end, time_fmt)
