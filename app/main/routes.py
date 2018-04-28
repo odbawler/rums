@@ -6,7 +6,7 @@ from datetime import *
 from app.main.forms import EditProfileForm, ClockForm
 from app.models import Employee, TimeRecord, EmployeeTime
 from app.main import bp
-from app.main.functions import calculate_time_worked, calculate_break_time, format_timedelta
+from app.main.functions import calculate_time_worked, calculate_break_time, format_timedelta, subtract_daily_hrs, add_worked_hrs
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
@@ -27,98 +27,117 @@ def index():
             # Begin with an empty time_record
             time_record = TimeRecord(employee_id='', date='', start_time=dt, end_time=dt, start_break=dt,
             end_break=dt, total_break = dt)
+
             # Retrieve employee from db
             user = Employee.query.filter_by(username=current_user.username).first()
+
             # Retrieve a list of all time_records for an employee
             tr = TimeRecord.query.filter_by(employee_id=user.employee_id).all()
+
             # If an employee has already clocked a time for today, update the existing time record
             for row in tr:
                 if datetime.strptime(str(row.date), date_fmt) == datetime.strptime(
                 datetime.strftime(form.date.data, date_fmt), date_fmt):
                     time_record = row
+
             # Create variables to hold clock entries, set to 00:00:00 if no entry so far
             start = time_record.start_time
             break_start = time_record.start_break
             break_end = time_record.end_break
             end = time_record.end_time
+
             # If the user wants to record a the current time, we use this formatted datetime.now().time() (no ms)
-            time_to_rec = datetime.strptime(str(datetime.now().time()).split(".")[0], time_fmt)
+            format_now = str(datetime.now().time())
+            time_to_rec = datetime.strptime(format_now.split(".")[0], time_fmt).time()
+
             # If the user wants the current time, the time data will be left at midnight.
             # Use this check to determine whether to use the timefield data or the datetime.now().time()
             if str(form.time.data) != '00:00:00':
                 time_to_rec = form.time.data
+
             # If there is a current time_record open for this employee,
             # confirm which clocking type the user has entered, and update the relevant time entry
             if time_record.employee_id != '':
                 if form.clock_type.data == 'Clock-in':
                     time_record.start_time = time_to_rec
                     start = time_to_rec
-                    print(type(start))
                 elif form.clock_type.data == 'Start-Break':
                     time_record.start_break = time_to_rec
                     break_start = form.time.data
                 elif form.clock_type.data == 'End-Break':
+                    # Cannot end break before starting break
+                    if str(time_record.start_break) == '00:00:00':
+                        response = make_response()
+                        return redirect(url_for('main.index')), flash("Must start break before ending break!", 'danger')
+                    # End break time cannot be before start break time
+                    if time_to_rec < time_record.start_break:
+                        return redirect(url_for('main.index')), flash("Cannot end break before start of break!", 'danger')
                     time_record.end_break = time_to_rec
                     break_end = form.time.data
                 elif form.clock_type.data == 'Clock-out':
                     time_record.end_time = time_to_rec
                     end = form.time.data
+
                 # Calculate break total
                 break_total = calculate_break_time(break_start, break_end, time_fmt)
-                print(time_record.start_time)
-                print(time_record.end_time)
+
                 if(time_record.start_time != dt and
-                  time_record.end_time != dt and
-                  time_record.start_break != dt and
-                  time_record.end_break != dt):
+                  time_record.end_time != dt):
                     print("calcualting time worked")
                     # We can send the start time as datetime or datetime.time due to the auto/manual time entering routes.
-                    # To deal with this -- if we have a datetime, we send only the .time() part
+                    # To deal with this -- if we have a datetime, we send only the .time() element
                     if isinstance(start, datetime):
                         worked = calculate_time_worked(end, break_total, start.time(), time_fmt)
                     else:
                         # Calculate worked time
                         worked = calculate_time_worked(end, break_total, start, time_fmt)
                 else:
-                    print("blank worked")
                     worked = dt
+
                 # Set time_worked column in db object
                 time_record.time_worked = worked
+
                 # Set total_break in db
                 time_record.total_break = break_total
+
                 # Commit changes to db
                 db.session.commit()
+
                 if str(form.time.data) != '00:00:00':
                     flash('Recorded: ' +  form.clock_type.data + ' ' + str(form.date.data) + ' ' + str(form.time.data))
                 else:
                     flash('Recorded: ' +  form.clock_type.data + ' ' + str(form.date.data) + ' ' + str(datetime.now().time()).split(".")[0])
             else:
-                # If there is no open time_record for today, we need to create one,
-                # firstly, update the relevant time entry
+                # If there is no open time_record for today, we need to create one.
+                # Firstly, update the relevant time entry
                 if form.clock_type.data == 'Clock-in':
                     start = time_to_rec
                 elif form.clock_type.data == 'Start-Break':
                     break_start = time_to_rec
                 elif form.clock_type.data == 'End-Break':
+                    # Cannot end break before starting break
+                    if str(time_record.start_break) == '00:00:00':
+                        response = make_response()
+                        return redirect(url_for('main.index')), flash("Must start break before ending break!", 'danger')
+                    # End break time cannot be before start break time
+                    if time_to_rec < time_record.start_break:
+                        return redirect(url_for('main.index')), flash("Cannot end break before start of break!", 'danger')
                     break_end = time_to_rec
                 elif form.clock_type.data == 'Clock-out':
                     end = time_to_rec
+
                 # Calculate break total
                 break_total = calculate_break_time(break_start, break_end, time_fmt)
-                # We can send the start time as datetime or datetime.time due to the auto/manual time entering routes.
-                # To deal with this -- if we have a datetime, we send only the .time() part
-                #if isinstance(start, datetime):
-                #    worked = calculate_time_worked(end, break_total, start.time(), time_fmt)
-                #else:
-                    # Calculate worked time
-                #    worked = calculate_time_worked(end, break_total, start, time_fmt)
-                # Create new time_record and insert values
+
                 time = TimeRecord(employee_id=user.employee_id, date=form.date.data, start_time=start,
                  end_time=end, start_break=break_start, end_break=break_end, total_break=break_total, time_worked=dt)
+
                 # Add the new time record to the db session
                 db.session.add(time)
+
                 # Commit changes to the db
                 db.session.commit()
+
                 if str(form.time.data) != '00:00:00':
                     flash('Recorded: ' +  form.clock_type.data + ' ' + str(form.date.data) + ' ' + str(form.time.data))
                 else:
@@ -146,9 +165,9 @@ def update_flexi(variable):
         # hrs to add per working day
         daily_hrs_time = datetime.combine(date.min, et.hours_a_day) - datetime.min
         for row in trs:
-            # total expected hours since last update
-            daily_hrs_delta += daily_hrs_time
-            if row.date <= datetime.now().date():
+            if row.date >= et.last_updated.date():
+                # total expected hours since last update
+                daily_hrs_delta += daily_hrs_time
                 # total worked hours since last update
                 time_worked_delta = datetime.combine(date.min, row.time_worked) - datetime.min
                 worked_hrs_delta += time_worked_delta
@@ -156,25 +175,31 @@ def update_flexi(variable):
         if now - et.last_updated > delay:
             # If daily hrs have already been applied today, do not add them again
             if et.last_updated.date() != datetime.today().date():
-                print("daily hrs")
+                # Print out values as they are manipulated in case of investigation
+                print("expected hours")
                 print(daily_hrs_delta)
-                print("worked hrs")
+                print("worked hhours")
                 print(worked_hrs_delta)
-                current_flexi = datetime.combine(date.min, datetime.strptime(et.flexi, '%H:%M:%S').time()) - datetime.min
-                #flexi_adjustment = time_worked_delta + daily_hrs_delta
-                #print("flexi adjust")
-                #print(flexi_adjustment)
-                #current_flexi += flexi_adjustment
-                print("flexi")
-                print(format_timedelta(current_flexi))
-                current_flexi = daily_hrs_delta - current_flexi
-                print("flexi - hrs")
-                print(format_timedelta(current_flexi))
-                current_flexi = time_worked_delta + current_flexi
-                print("flexi + hrs")
-                print(format_timedelta(current_flexi))
-                et.flexi = format_timedelta(current_flexi)
+
+                # Retrieve current flexi value
+                current_flexi = et.flexi
+                print("current flexi")
+                print(current_flexi)
+
+                # Subtract accumulated daily working hours since last update
+                subtracted_flexi = subtract_daily_hrs(current_flexi, format_timedelta(daily_hrs_delta))
+                print("flexi - expected hours")
+                print(subtracted_flexi)
+
+                # Add total worked hours since last update
+                calculated_flexi = add_worked_hrs(subtracted_flexi, format_timedelta(worked_hrs_delta))
+                print("flexi + worked hours")
+                print(calculated_flexi)
+
+                # Set new updated flexi value and update last_updated column
+                et.flexi = calculated_flexi
                 et.last_updated = datetime.now()
+
                 print('updating flexi time for')
                 print(current_user)
                 db.session.commit()
@@ -182,7 +207,43 @@ def update_flexi(variable):
                 response.headers['Content-Type'] = 'text/xml; charset=utf-8'
                 return response
             else:
-                # adjust for working hours here
+                # for clocking corrections calculate from beginning of time_records
+                et.last_updated = datetime(2018, 1, 1, 0, 0, 0, 0)
+                print('last updated')
+                print(et.last_updated)
+                et.flexi = '00:00'
+
+                for row in trs:
+                    if row.date >= et.last_updated.date():
+                        # total expected hours since last update
+                        daily_hrs_delta += daily_hrs_time
+                        # total worked hours since last update
+                        time_worked_delta = datetime.combine(date.min, row.time_worked) - datetime.min
+                        worked_hrs_delta += time_worked_delta
+
+                print("expected hours")
+                print(daily_hrs_delta)
+                print("worked hhours")
+                print(worked_hrs_delta)
+
+                # Retrieve current flexi value
+                current_flexi = et.flexi
+                print("current flexi")
+                print(current_flexi)
+
+                # Subtract accumulated daily working hours
+                subtracted_flexi = subtract_daily_hrs(current_flexi, format_timedelta(daily_hrs_delta))
+                print("flexi - expected hours")
+                print(subtracted_flexi)
+
+                # Add total worked hours
+                calculated_flexi = add_worked_hrs(subtracted_flexi, format_timedelta(worked_hrs_delta))
+                print("flexi + worked hours")
+                print(calculated_flexi)
+
+                # Set new updated flexi value and update last_updated column
+                et.flexi = calculated_flexi
+
                 et.last_updated = datetime.now()
                 db.session.commit()
                 response = make_response(str(et.flexi))
