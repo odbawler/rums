@@ -15,7 +15,7 @@ class Employee(UserMixin, db.Model):
     address2 = db.Column(db.String)
     address3 = db.Column(db.String)
     postcode = db.Column(db.String(7))
-    phone_number = db.Column(db.String(11))
+    phone_number = db.Column(db.String)
     date_of_birth = db.Column(db.Date)
     line_manager_id = db.Column(db.Integer)
     leave_allowance = db.Column(db.Numeric)
