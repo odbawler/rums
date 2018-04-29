@@ -92,7 +92,7 @@ def reset_password_request():
             send_password_reset_email(user)
         # Whether user is in DB or not, flash sent message to prevent malicious use to find users
         flash('Check your email for the instructions to reset your password')
-        return redirect(url_for('main.login'))
+        return redirect(url_for('authentication.login'))
     return render_template('authentication/password_reset_request.html',
                            title='Password Reset', form=form)
 
