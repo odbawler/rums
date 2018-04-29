@@ -62,14 +62,26 @@ def index():
             # confirm which clocking type the user has entered, and update the relevant time entry
             if time_record.employee_id != '':
                 if form.clock_type.data == 'Clock-in':
+                    # (clocking corrections) - Cannot record clock-in time after clock-out time
+                    if time_record.end_time != dt:
+                        if time_to_rec > time_record.end_time:
+                            return redirect(url_for('main.index')), flash("Cannot clock in after clock out time!", 'danger')
                     time_record.start_time = time_to_rec
                     start = time_to_rec
                 elif form.clock_type.data == 'Start-Break':
+                    # Must clock-in before starting break
+                    if time_record.start_time != dt:
+                        if time_to_rec < time_record.start_time:
+                            return redirect(url_for('main.index')), flash("Cannot start break before clocking in!", 'danger')
                     time_record.start_break = time_to_rec
                     break_start = time_to_rec
                 elif form.clock_type.data == 'End-Break':
+                    # Must clock in before taking a break
+                    if time_record.start_time != dt:
+                        if time_to_rec < time_record.start_time:
+                            return redirect(url_for('main.index')), flash("Cannot end break before clocking in!", 'danger')
                     # Cannot end break before starting break
-                    if str(time_record.start_break) == '00:00:00':
+                    if time_record.start_break == dt:
                         response = make_response()
                         return redirect(url_for('main.index')), flash("Must start break before ending break!", 'danger')
                     # End break time cannot be before start break time
@@ -78,6 +90,13 @@ def index():
                     time_record.end_break = time_to_rec
                     break_end = time_to_rec
                 elif form.clock_type.data == 'Clock-out':
+                    # Must clock-in before clocking out
+                    if time_record.start_time == dt:
+                        return redirect(url_for('main.index')), flash("Must clock in before clocking out!", 'danger')
+                    # Cannot record clock-out time before clock-in time
+                    if time_record.start_time != dt:
+                        if time_to_rec < time_record.start_time:
+                            return redirect(url_for('main.index')), flash("Cannot clock out before clocking in!", 'danger')
                     time_record.end_time = time_to_rec
                     end = time_to_rec
 
@@ -117,19 +136,37 @@ def index():
                 # If there is no open time_record for today, we need to create one.
                 # Firstly, update the relevant time entry
                 if form.clock_type.data == 'Clock-in':
+                    # (clocking corrections) - Cannot record clock-in time after clock-out time
+                    if time_record.end_time != dt:
+                        if time_to_rec > time_record.end_time:
+                            return redirect(url_for('main.index')), flash("Cannot clock in after clock out time!", 'danger')
                     start = time_to_rec
                 elif form.clock_type.data == 'Start-Break':
+                    # Must clock-in before starting break
+                    if time_record.start_time != dt:
+                        if time_to_rec < time_record.start_time:
+                            return redirect(url_for('main.index')), flash("Cannot start break before clocking in!", 'danger')
                     break_start = time_to_rec
                 elif form.clock_type.data == 'End-Break':
+                    # Must clock in before taking a break
+                    if time_record.start_time != dt:
+                        if time_to_rec < time_record.start_time:
+                            return redirect(url_for('main.index')), flash("Cannot end break before clocking in!", 'danger')
                     # Cannot end break before starting break
-                    if str(time_record.start_break) == '00:00:00':
-                        response = make_response()
+                    if time_record.start_break == dt
                         return redirect(url_for('main.index')), flash("Must start break before ending break!", 'danger')
                     # End break time cannot be before start break time
                     if time_to_rec < time_record.start_break:
                         return redirect(url_for('main.index')), flash("Cannot end break before start of break!", 'danger')
                     break_end = time_to_rec
                 elif form.clock_type.data == 'Clock-out':
+                    # Must clock-in before clocking out
+                    if time_record.start_time == dt:
+                        return redirect(url_for('main.index')), flash("Must clock in before clocking out!", 'danger')
+                    # Cannot record clock-out time before clock-in time
+                    if time_record.start_time != dt:
+                        if time_to_rec < time_record.start_time:
+                            return redirect(url_for('main.index')), flash("Cannot clock out before clocking in!", 'danger')
                     end = time_to_rec
 
                 # Calculate break total if both break times are recorded
