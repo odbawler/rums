@@ -22,17 +22,17 @@
         });
 </script>
 
-    <h1>Hi, {{ current_user.username }}!</h1>
+    <h1>Hi, {{ current_user.username }}!<a href="#" data-toggle="tooltip" title=
+    "1. Choose a clock entry from the drop down list.
+    2. Enter the time you wish to record in the box in 24 hour format.
+    NOTE: If you wish to enter the current time, leave the default time
+    in the box as '00:00'.
+    3. To record for today, leave the date as it is. If you would like to
+    enter a time for another day or correct a previously entered time, just choose the
+    relevant date.">
+    <span class="glyphicon glyphicon-info-sign"></span></a></h1>
     <div class="row">
         <div class="col-md-4">
-          <a href="#" data-toggle="tooltip" title="1. Choose a clock entry from the drop down list.
-                      2. Enter the time you wish to record in the box in 24 hour format.
-                      NOTE: If you wish to enter the current time, leave the default time
-                      in the box as '00:00'.
-                      3. To record for today, leave the date as it is. If you would like to
-                      enter a time for another day or correct a previously entered time, just choose the
-                      relevant date.">
-                      <span class="glyphicon glyphicon-info-sign"></span></a>
           {{ wtf.quick_form(form) }}
         </div>
         <div class="col-md-4">
