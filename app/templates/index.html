@@ -5,7 +5,9 @@
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
     <link rel="stylesheet" type="text/css" href="static/style.css">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type=text/javascript>
         $(document).ready(function() {
           $('a#flexi').bind('click', function(e) {
@@ -23,16 +25,19 @@
     <h1>Hi, {{ current_user.username }}!</h1>
     <div class="row">
         <div class="col-md-4">
-          <span title="hover text">
+          <div id="info">
+            <span class="glyphicon glyphicon-info-sign"></span>
+          </div>
+          <div id="onhoverinfo">
             1. Choose a clock entry from the drop down list.
             2. Enter the time you wish to record in the box in 24 hour format.
             NOTE: If you wish to enter the current time, leave the default time
-               in the box as '00:00'.
+            in the box as '00:00'.
             3. To record for today, leave the date as it is. If you would like to
-               enter a time for another day or correct a previously entered time, just choose the
-                relevant date.
-          </span>
-            {{ wtf.quick_form(form) }}
+            enter a time for another day or correct a previously entered time, just choose the
+            relevant date
+          </div>
+          {{ wtf.quick_form(form) }}
         </div>
         <div class="col-md-4">
             <br>
