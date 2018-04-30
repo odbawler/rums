@@ -71,6 +71,10 @@ def index():
                     if time_record.start_time != dt:
                         if time_to_rec < time_record.start_time:
                             return redirect(url_for('main.index')), flash("Cannot start break before clocking in!", 'danger')
+                    # Cannot start break after clock out time
+                    if time_record.end_time != dt:
+                        if time_to_rec > time_record.end_time:
+                            return redirect(url_for('main.index')), flash("Cannot start break after clock out time!", 'danger')
                     time_record.start_break = time_to_rec
                     break_start = time_to_rec
                 elif form.clock_type.data == 'End-Break':
@@ -84,6 +88,10 @@ def index():
                     # End break time cannot be before start break time
                     if time_to_rec < time_record.start_break:
                         return redirect(url_for('main.index')), flash("Cannot end break before start of break!", 'danger')
+                    # Cannot end break after clock out time
+                    if time_record.end_time != dt:
+                        if time_to_rec > time_record.end_time:
+                            return redirect(url_for('main.index')), flash("Cannot end break after clock out time!", 'danger')
                     time_record.end_break = time_to_rec
                     break_end = time_to_rec
                 elif form.clock_type.data == 'Clock-out':
