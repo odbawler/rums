@@ -1,6 +1,4 @@
-import sendgrid
 import os
-from sendgrid.helpers.mail import *
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 

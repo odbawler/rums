@@ -66,6 +66,10 @@ class EmployeeTime(db.Model):
     def __repr__(self):
         return '<employee_time {}>'.format(self.flexi_total)
 
+    def get_flexi(self):
+        hours, minutes = current.split(':')
+        return hours + 'hours ' + minutes + 'minutes'
+
 class TimeRecord(db.Model):
     time_record_id = db.Column(db.Integer, primary_key=True)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.employee_id'))
@@ -76,9 +80,25 @@ class TimeRecord(db.Model):
     end_break = db.Column(db.Time, nullable=True)
     total_break = db.Column(db.Time, nullable=True)
     time_worked = db.Column(db.Time, nullable=True)
+    sufficient = db.Column(db.String, nullable=True)
 
     def __repr__(self):
         return '<time_record {}>'.format(self.date)
+
+    def get_date(self):
+        return self.date
+
+    def get_clock_in(self):
+        return self.start_time
+
+    def get_clock_out(self):
+        return self.end_time
+
+    def get_start_break(self):
+        return self.start_break
+
+    def get_end_break(self):
+        return self.end_break
 
 class LineManager (db.Model):
     line_manager_id = db.Column(db.Integer, primary_key=True)

@@ -19,9 +19,10 @@ def index():
     date_fmt = '%Y-%m-%d'
     dt = datetime.strptime('00:00:00', time_fmt).time()
     delta = timedelta(hours=0,minutes=0,seconds=0)
-    print('delta')
-    print(delta)
+    # Retrieve a list of all time_records for an employee
+    tr = TimeRecord.query.filter_by(employee_id=current_user.employee_id).order_by(TimeRecord.date.desc())
     et = EmployeeTime.query.filter_by(employee_id=current_user.employee_id).first()
+    fl_hours, fl_minutes = et.flexi.split(':')
     if form.validate_on_submit():
         # Prevent recording time in the future (for the same day)
         if form.date.data == datetime.now().date() and str(form.time.data) > str(datetime.now().time()):
@@ -33,9 +34,6 @@ def index():
 
             # Retrieve employee from db
             user = Employee.query.filter_by(username=current_user.username).first()
-
-            # Retrieve a list of all time_records for an employee
-            tr = TimeRecord.query.filter_by(employee_id=user.employee_id).all()
 
             # If an employee has already clocked a time for today, update the existing time record
             for row in tr:
@@ -122,6 +120,16 @@ def index():
                 # Set time_worked column in db object
                 time_record.time_worked = worked
 
+                if isinstance(time_record.time_worked, datetime):
+                    if time_record.time_worked.time() >= et.hours_a_day:
+                        time_record.sufficient = 'y'
+                    else:
+                        time_record.sufficient = 'n'
+                elif time_record.time_worked >= et.hours_a_day:
+                    time_record.sufficient = 'y'
+                else:
+                    time_record.sufficient = 'n'
+
                 # Set total_break in db
                 time_record.total_break = break_total
 
@@ -190,7 +198,7 @@ def index():
                     flash('Recorded: ' +  form.clock_type.data + ' ' + str(form.date.data) + ' ' + str(datetime.now().time()).split(".")[0])
 
             return redirect(url_for('main.index'))
-    return render_template("index.html", title='Home Page', form=form, flexi=et.flexi)
+    return render_template("index.html", title='Home Page', form=form, flexi_hours=fl_hours, flexi_minutes=fl_minutes, tr=tr[0:9])
 
 # This route appends the users employee id value to the url in order to prevent users from hitting the URL directly,
 # This ofcourse can still happen, so to prevent a user updating flexi for another user, I catch the

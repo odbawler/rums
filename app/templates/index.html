@@ -3,7 +3,7 @@
 
 {% block app_content %}
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css"> -->
     <link rel="stylesheet" type="text/css" href="static/style.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -20,34 +20,69 @@
             setTimeout(function(){location.reload();},300);
           });
         });
-</script>
+    </script>
 
-    <h1>Hi, {{ current_user.username }}!<a href="#" data-toggle="tooltip" title=
-    "1. Choose a clock entry from the drop down list.
-    2. Enter the time you wish to record in the box in 24 hour format.
-    NOTE: If you wish to enter the current time, leave the default time
-    in the box as '00:00'.
-    3. To record for today, leave the date as it is. If you would like to
-    enter a time for another day or correct a previously entered time, just choose the
-    relevant date.">
-    <span class="glyphicon glyphicon-info-sign"></span></a></h1>
+
+    <h2>Hi, {{ current_user.username }}!  <small> <a href="#" data-toggle="tooltip" title=
+"1. Choose a clock entry from the drop down list.
+
+2. Enter the time you wish to record in the box in 24 hour format.
+
+NOTE: If you wish to enter the current time, leave the default time in the box as '00:00'.
+
+3. To record for today, leave the date as it is. If you would like to enter a time for another day or correct a previously entered time, just choose the relevant date.">
+     <span class="glyphicon glyphicon-info-sign"></span></a></small></h2>
     <div class="row">
-        <div class="col-md-4">
-          {{ wtf.quick_form(form) }}
+        <div class="col-md-3">
+            {{ wtf.quick_form(form) }}
         </div>
-        <div class="col-md-4">
-            <br>
+        <div class="col-md-2" align='center'>
+
         </div>
-        <div class='container' align='center'>
+        <div class='col-md-5' align='center'>
             <form>
-                <h3> Flexi </h3>
-                <h2> {{flexi}} </h2>
-                <h5>Hours : Minutes</h5>
-                <a href=# id=flexi><button class='btn btn-default'>Update</button></a>
+              </br>
+              </br>
+              </br>
+              <h3> Your flexi balance is {{flexi_hours}} hours {{flexi_minutes}} minutes </h3>
+              </br>
+              <a href=# id=flexi><button class='btn btn-default'>Update</button></a>
             </form>
 
         </div>
+    </div>
+    <div class="row">
+      <div class='col-md-12'>
+        <h3> Clocking History <small> <a href="#" data-toggle="tooltip" title=
+"Green: You have exceed your working hours for this day.
 
-
+Yellow: You have worked less time than your expected working hours.">
+         <span class="glyphicon glyphicon-info-sign"></span></a></small></h3>
+        <table class="table table-hover" id="results">
+          <thead>
+            <tr>
+              <th> Date</th>
+              <th>Clock-in</th>
+              <th>Clock-out</th>
+              <th>Start Break</th>
+              <th>End Break</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in tr: %}
+            {% if row.sufficient == 'y' %}
+            <tr class="success" id="Entries">
+            {% else %}
+            <tr class="warning" id="Entries">
+            {% endif %}
+              <td>{{row.get_date()}}</td>
+              <td>{{row.get_clock_in()}}</td>
+              <td>{{row.get_clock_out()}}</td>
+              <td>{{row.get_start_break()}}</td>
+              <td>{{row.get_end_break()}}</td>
+            <tr>
+            {% endfor %}
+          </tbody>
+        </table>
     </div>
 {% endblock %}
