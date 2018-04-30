@@ -100,6 +100,9 @@ class TimeRecord(db.Model):
     def get_end_break(self):
         return self.end_break
 
+    def get_time_worked(self):
+        return self.time_worked
+
 class LineManager (db.Model):
     line_manager_id = db.Column(db.Integer, primary_key=True)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.employee_id'))

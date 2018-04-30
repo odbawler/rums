@@ -66,6 +66,7 @@ Yellow: You have worked less time than your expected working hours.">
               <th>Start Break</th>
               <th>End Break</th>
               <th>Clock-out</th>
+              <th>Time Worked</th>
             </tr>
           </thead>
           <tbody>
@@ -80,6 +81,7 @@ Yellow: You have worked less time than your expected working hours.">
               <td>{{row.get_start_break()}}</td>
               <td>{{row.get_end_break()}}</td>
               <td>{{row.get_clock_out()}}</td>
+              <td>{{row.get_time_worked()}}</td>
             <tr>
             {% endfor %}
           </tbody>
