@@ -95,6 +95,10 @@ def index():
                     if time_record.start_time != dt:
                         if time_to_rec < time_record.start_time:
                             return redirect(url_for('main.index')), flash("Cannot clock out before clocking in!", 'danger')
+                    # Cannot clock out if break is not finished
+                    if time_record.start_break != dt:
+                        if time_record.end_break == dt:
+                            return redirect(url_for('main.index')), flash("Must finish break before clocking out!", 'danger')
                     time_record.end_time = time_to_rec
                     end = time_to_rec
 
@@ -175,6 +179,10 @@ def index():
                     if time_record.start_time != dt:
                         if time_to_rec < time_record.start_time:
                             return redirect(url_for('main.index')), flash("Cannot clock out before clocking in!", 'danger')
+                    # Cannot clock out if break is not finished
+                    if time_record.start_break != dt:
+                        if time_record.end_break == dt:
+                            return redirect(url_for('main.index')), flash("Must finish break before clocking out!", 'danger')
                     end = time_to_rec
 
                 # Calculate break total if both break times are recorded
