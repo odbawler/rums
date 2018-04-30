@@ -80,7 +80,6 @@ def index():
                             return redirect(url_for('main.index')), flash("Cannot end break before clocking in!", 'danger')
                     # Cannot end break before starting break
                     if time_record.start_break == dt:
-                        response = make_response()
                         return redirect(url_for('main.index')), flash("Must start break before ending break!", 'danger')
                     # End break time cannot be before start break time
                     if time_to_rec < time_record.start_break:
