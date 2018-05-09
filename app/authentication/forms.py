@@ -45,7 +45,7 @@ class RegisterEmployeeForm(FlaskForm):
         if upper  == password.data:
             raise ValidationError('Password must contain atleast 1 lowercase character.')
         # Check for number
-        if not password.data.isalnum():
+        if not any(char.isdigit() for char in password.data):
             raise ValidationError('Password must contain atleast 1 number.')
 
 
@@ -72,5 +72,5 @@ class PasswordResetForm(FlaskForm):
         if upper  == password.data:
             raise ValidationError('Password must contain atleast 1 lowercase character.')
         # Check for number
-        if not password.data.isalnum():
+        if not any(char.isdigit() for char in password.data):
             raise ValidationError('Password must contain atleast 1 number.')
