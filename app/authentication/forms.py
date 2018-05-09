@@ -32,23 +32,22 @@ class RegisterEmployeeForm(FlaskForm):
         if employee is not None:
             raise ValidationError('Please use a different email address.')
 
-    def validate_pword_length(self, password):
-        if len(pw) < 8:
+    def validate_password(self, password):
+        # Ensure password is 8 or more chars
+        if len(password) < 8:
             raise ValidationError('Password must be at least 8 characters.')
-
-    def validate_pword_uppercase(self, password):
-         lower = passsword.lower()
-         if lower  == password:
-             raise ValidationError('Password must contain atleast 1 uppercase character.')
-
-    def validate_pword_lowercase(self, password):
-         upper = passsword.upper()
-         if upper  == password:
-             raise ValidationError('Password must contain atleast 1 lowercase character.')
-
-    def validate_pword_number(self, password):
+        # Check for uppercase chars
+        lower = passsword.lower()
+        if lower  == password:
+            raise ValidationError('Password must contain atleast 1 uppercase character.')
+        # Check for lowercase chars
+        upper = passsword.upper()
+        if upper  == password:
+            raise ValidationError('Password must contain atleast 1 lowercase character.')
+        # Check for number
         if not password.isalnum():
-             raise ValidationError('Password must contain atleast 1 number.')
+            raise ValidationError('Password must contain atleast 1 number.')
+
 
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -60,20 +59,18 @@ class PasswordResetForm(FlaskForm):
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset your password')
 
-    def validate_pword_length(self, password):
-        if len(pw) < 8:
+    def validate_password(self, password):
+        # Ensure password is 8 or more chars
+        if len(password) < 8:
             raise ValidationError('Password must be at least 8 characters.')
-
-    def validate_pword_uppercase(self, password):
-         lower = passsword.lower()
-         if lower  == password:
-             raise ValidationError('Password must contain atleast 1 uppercase character.')
-
-    def validate_pword_lowercase(self, password):
-         upper = passsword.upper()
-         if upper  == password:
-             raise ValidationError('Password must contain atleast 1 lowercase character.')
-
-    def validate_pword_number(self, password):
+        # Check for uppercase chars
+        lower = passsword.lower()
+        if lower  == password:
+            raise ValidationError('Password must contain atleast 1 uppercase character.')
+        # Check for lowercase chars
+        upper = passsword.upper()
+        if upper  == password:
+            raise ValidationError('Password must contain atleast 1 lowercase character.')
+        # Check for number
         if not password.isalnum():
-             raise ValidationError('Password must contain atleast 1 number.')
+            raise ValidationError('Password must contain atleast 1 number.')
