@@ -33,7 +33,7 @@ class RegisterEmployeeForm(FlaskForm):
             raise ValidationError('Please use a different email address.')
 
     def validate_pword_length(self, password):
-        if len(pw) < 8
+        if len(pw) < 8:
             raise ValidationError('Password must be at least 8 characters.')
 
     def validate_pword_uppercase(self, password):
@@ -61,7 +61,7 @@ class PasswordResetForm(FlaskForm):
     submit = SubmitField('Reset your password')
 
     def validate_pword_length(self, password):
-        if len(pw) < 8
+        if len(pw) < 8:
             raise ValidationError('Password must be at least 8 characters.')
 
     def validate_pword_uppercase(self, password):
