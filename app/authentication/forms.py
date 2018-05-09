@@ -34,18 +34,18 @@ class RegisterEmployeeForm(FlaskForm):
 
     def validate_password(self, password):
         # Ensure password is 8 or more chars
-        if len(password) < 8:
+        if len(password.data) < 8:
             raise ValidationError('Password must be at least 8 characters.')
         # Check for uppercase chars
-        lower = passsword.lower()
+        lower = password.data.lower()
         if lower  == password:
             raise ValidationError('Password must contain atleast 1 uppercase character.')
         # Check for lowercase chars
-        upper = passsword.upper()
+        upper = password.data.upper()
         if upper  == password:
             raise ValidationError('Password must contain atleast 1 lowercase character.')
         # Check for number
-        if not password.isalnum():
+        if not password.data.isalnum():
             raise ValidationError('Password must contain atleast 1 number.')
 
 
@@ -61,16 +61,16 @@ class PasswordResetForm(FlaskForm):
 
     def validate_password(self, password):
         # Ensure password is 8 or more chars
-        if len(password) < 8:
+        if len(password.data) < 8:
             raise ValidationError('Password must be at least 8 characters.')
         # Check for uppercase chars
-        lower = passsword.lower()
+        lower = password.data.lower()
         if lower  == password:
             raise ValidationError('Password must contain atleast 1 uppercase character.')
         # Check for lowercase chars
-        upper = passsword.upper()
+        upper = password.data.upper()
         if upper  == password:
             raise ValidationError('Password must contain atleast 1 lowercase character.')
         # Check for number
-        if not password.isalnum():
+        if not password.data.isalnum():
             raise ValidationError('Password must contain atleast 1 number.')
