@@ -27,10 +27,10 @@ def index():
         # If clear day is chosen, remove the time record to start fresh
         if form.clock_type.data == 'Clear Day':
             for row in tr:
-                if datetime.strptime(str(row.date), date_fmt) == datetime.strptime(
-                datetime.strftime(form.date.data, date_fmt), date_fmt):
+                if datetime.strptime(str(row.date), date_fmt) == datetime.strptime(datetime.strftime(form.date.data, date_fmt), date_fmt):
                     db.session.delete(row)
                     db.session.commit()
+                    return render_template("index.html", title='Home Page', form=form, flexi_hours=fl_hours, flexi_minutes=fl_minutes, tr=tr[0:9])
         else:
             # Prevent recording time in the future (for the same day)
             if form.date.data == datetime.now().date() and str(form.time.data) > str(datetime.now().time()):
