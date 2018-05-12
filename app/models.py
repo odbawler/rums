@@ -81,6 +81,7 @@ class TimeRecord(db.Model):
     total_break = db.Column(db.Time, nullable=True)
     time_worked = db.Column(db.Time, nullable=True)
     sufficient = db.Column(db.String, nullable=True)
+    absent = db.Column(db.String, nullable=True)
 
     def __repr__(self):
         return '<time_record {}>'.format(self.date)
