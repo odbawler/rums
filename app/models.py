@@ -62,6 +62,7 @@ class EmployeeTime(db.Model):
     hours_a_day = db.Column(db.Time)
     flexi = db.Column(db.String)
     last_updated = db.Column(DateTime)
+    created = db.Column(db.Date)
 
     def __repr__(self):
         return '<employee_time {}>'.format(self.flexi_total)

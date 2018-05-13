@@ -72,7 +72,7 @@ def register():
             # Create datetime object to hold daily hours/time required per day
             hours = datetime(1900, 1, 1, hours, minutes)
             employeetime = EmployeeTime(employee_id = newemployee.get_id(), hours_a_week = form.hours.data,
-             hours_a_day = hours.time(), flexi = '00:00', last_updated = datetime.now())
+             hours_a_day = hours.time(), flexi = '00:00', last_updated = datetime.now(), created = datetime.now().date())
             db.session.add(employeetime)
             db.session.commit()
             flash('User Registered')

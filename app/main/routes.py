@@ -31,6 +31,8 @@ def index():
                     db.session.delete(row)
                     db.session.commit()
             return redirect(url_for('main.index'))
+        elif form.date.data < et.created:
+            return redirect(url_for('main.index')), flash("Invalid date!", 'danger')
         else:
             # Prevent recording time in the future (for the same day)
             if form.date.data == datetime.now().date() and str(form.time.data) > str(datetime.now().time()):
@@ -54,6 +56,7 @@ def index():
                 break_start = time_record.start_break
                 break_end = time_record.end_break
                 end = time_record.end_time
+                absent = ''
 
                 # If the user wants to record a the current time, we use this formatted datetime.now().time() (no ms)
                 format_now = str(datetime.now().time())
@@ -68,6 +71,8 @@ def index():
                 # confirm which clocking type the user has entered, and update the relevant time entry
                 if time_record.employee_id != '':
                     if form.clock_type.data == 'Clock-in':
+                        if time_record.absent == 'y':
+                            return redirect(url_for('main.index')), flash("Cannot record working times when absent!", 'danger')
                         # (clocking corrections) - Cannot record clock-in time after clock-out time
                         if time_record.end_time != dt:
                             if time_to_rec > time_record.end_time:
@@ -75,6 +80,8 @@ def index():
                         time_record.start_time = time_to_rec
                         start = time_to_rec
                     elif form.clock_type.data == 'Start-Break':
+                        if time_record.absent == 'y':
+                            return redirect(url_for('main.index')), flash("Cannot record working times when absent!", 'danger')
                         # Must clock-in before starting break
                         if time_record.start_time != dt:
                             if time_to_rec < time_record.start_time:
@@ -86,6 +93,8 @@ def index():
                         time_record.start_break = time_to_rec
                         break_start = time_to_rec
                     elif form.clock_type.data == 'End-Break':
+                        if time_record.absent == 'y':
+                            return redirect(url_for('main.index')), flash("Cannot record working times when absent!", 'danger')
                         # Must clock in before taking a break
                         if time_record.start_time != dt:
                             if time_to_rec < time_record.start_time:
@@ -103,6 +112,8 @@ def index():
                         time_record.end_break = time_to_rec
                         break_end = time_to_rec
                     elif form.clock_type.data == 'Clock-out':
+                        if time_record.absent == 'y':
+                            return redirect(url_for('main.index')), flash("Cannot record working times when absent!", 'danger')
                         # Must clock-in before clocking out
                         if time_record.start_time == dt:
                             return redirect(url_for('main.index')), flash("Must clock in before clocking out!", 'danger')
@@ -121,6 +132,8 @@ def index():
                             return redirect(url_for('main.index')), flash("Cannot be absent after recording a time!", 'danger')
                         time_record.absent = 'y'
                     elif form.clock_type.data == 'Remove Absence':
+                        if time_record.absent != 'y':
+                            return redirect(url_for('main.index')), flash("No absence to remove!", 'danger')
                         time_record.absent = ''
 
                     # Calculate break total if both break times are recorded
@@ -208,13 +221,11 @@ def index():
                     elif form.clock_type.data == 'Absent':
                         if time_record.start_time != dt or time_record.start_break != dt or time_record.end_break != dt or time_record.end_time !=dt:
                             return redirect(url_for('main.index')), flash("Cannot be absent after recording a time!", 'danger')
-                        time_record.absent = 'y'
+                        absent = 'y'
                     elif form.clock_type.data == 'Remove Absence':
-                        time_record.absent = ''
-
-
-
-
+                        if time_record.absent != 'y':
+                            return redirect(url_for('main.index')), flash("No absence to remove!", 'danger')
+                        absent = ''
 
                     # Calculate break total if both break times are recorded
                     break_total = delta
@@ -223,7 +234,8 @@ def index():
                       break_total = calculate_break_time(break_start, break_end, time_fmt)
 
                     time = TimeRecord(employee_id=user.employee_id, date=form.date.data, start_time=start,
-                     end_time=end, start_break=break_start, end_break=break_end, total_break=break_total, time_worked=dt)
+                     end_time=end, start_break=break_start, end_break=break_end, total_break=break_total, time_worked=dt,
+                      sufficient = '', absent = absent)
 
                     # Add the new time record to the db session
                     db.session.add(time)
@@ -237,7 +249,8 @@ def index():
                         flash('Recorded: ' +  form.clock_type.data + ' ' + str(form.date.data) + ' ' + str(datetime.now().time()).split(".")[0])
 
                 return redirect(url_for('main.index'))
-        return render_template("index.html", title='Home Page', form=form, flexi_hours=fl_hours, flexi_minutes=fl_minutes, tr=tr[0:9])
+            return redirect(url_for('main.index'))
+    return render_template("index.html", title='Home Page', form=form, flexi_hours=fl_hours, flexi_minutes=fl_minutes, tr=tr[0:9])
 
 # This route appends the users employee id value to the url in order to prevent users from hitting the URL directly,
 # This ofcourse can still happen, so to prevent a user updating flexi for another user, I catch the
@@ -261,11 +274,12 @@ def update_flexi(variable):
         daily_hrs_time = datetime.combine(date.min, et.hours_a_day) - datetime.min
         for row in trs:
             if row.date >= et.last_updated.date():
-                # total expected hours since last update
-                daily_hrs_delta += daily_hrs_time
-                # total worked hours since last update
-                time_worked_delta = datetime.combine(date.min, row.time_worked) - datetime.min
-                worked_hrs_delta += time_worked_delta
+                if row.absent != 'y':
+                    # total expected hours since last update
+                    daily_hrs_delta += daily_hrs_time
+                    # total worked hours since last update
+                    time_worked_delta = datetime.combine(date.min, row.time_worked) - datetime.min
+                    worked_hrs_delta += time_worked_delta
 
         # Implement 5 minute cooldown period for refreshing flexi
         if now - et.last_updated > delay:
@@ -304,22 +318,21 @@ def update_flexi(variable):
                 return response
             else:
                 # for clocking corrections calculate from beginning of time_records
-                et.last_updated = datetime(2018, 1, 1, 0, 0, 0, 0)
+                et.last_updated = et.created
                 et.flexi = '00:00'
                 worked_delta = datetime.combine(date.min, base_time) - datetime.min
                 daily_delta = datetime.combine(date.min, base_time) - datetime.min
                 for row in trs:
-                    if row.date >= et.last_updated.date():
-                        # total expected hours since last update
+                    if row.absent != 'y':
                         daily_delta += daily_hrs_time
 
-                        # total worked hours since last update
+                        # total worked hours
                         time_worked_delta = datetime.combine(date.min, row.time_worked) - datetime.min
                         worked_delta += time_worked_delta
 
                 print("expected hours")
                 print(daily_delta)
-                print("worked hhours")
+                print("worked hours")
                 print(worked_delta)
 
                 # Retrieve current flexi value

@@ -30,7 +30,13 @@
 
 NOTE: If you wish to enter the current time, leave the default time in the box as '00:00'.
 
-3. To record for today, leave the date as it is. If you would like to enter a time for another day or correct a previously entered time, just choose the relevant date.">
+3. To record for today, leave the date as it is. If you would like to enter a time for another day or correct a previously entered time, just choose the relevant date.
+
+If you are absent on an expected working day, choose the absent option from the list.
+
+Should you choose absent by mistake, use the remove absent option to be able to record times.
+
+To delete all entries for a day and begin a fresh record, use the clear day option and choose the day to delete.">
      <span class="glyphicon glyphicon-info-sign"></span></a></small></h2>
     <div class="row">
         <div class="col-md-3">
@@ -56,12 +62,14 @@ NOTE: If you wish to enter the current time, leave the default time in the box a
         <h3> Clocking History <small> <a href="#" data-toggle="tooltip" title=
 "Green: You have exceeded your working hours for this day.
 
-Yellow: You have worked less time than your expected working hours.">
+Yellow: You have worked less time than your expected working hours.
+
+Red: You were absent on this day.">
          <span class="glyphicon glyphicon-info-sign"></span></a></small></h3>
         <table class="table table-hover" id="results">
           <thead>
             <tr>
-              <th> Date</th>
+              <th>Date</th>
               <th>Clock-in</th>
               <th>Start Break</th>
               <th>End Break</th>
@@ -72,9 +80,11 @@ Yellow: You have worked less time than your expected working hours.">
           <tbody>
             {% for row in tr: %}
             {% if row.sufficient == 'y' %}
-            <tr class="success" id="Entries">
+            <tr class="success">
+            {% elif row.absent == 'y' %}
+            <tr class="danger">
             {% else %}
-            <tr class="warning" id="Entries">
+            <tr class="warning">
             {% endif %}
               <td>{{row.get_date()}}</td>
               <td>{{row.get_clock_in()}}</td>
