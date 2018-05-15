@@ -22,6 +22,9 @@ class Employee(UserMixin, db.Model):
     leave_allowance = db.Column(db.Numeric)
     is_admin = db.Column(db.String)
 
+    employeestime = db.relationship("EmployeeTime", cascade="all,delete", backref="Employee")
+    timerecords = db.relationship("TimeRecord", cascade="all,delete", backref="Employee")
+
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
@@ -49,7 +52,7 @@ class Employee(UserMixin, db.Model):
         return Employee.query.get(id)
 
     def __repr__(self):
-        return '<employee {}>'.format(self.username)
+        return " name: %s, id: %s" % (self.name, self.employee_id)
 
 @login.user_loader
 def load_employee(id):
@@ -63,9 +66,10 @@ class EmployeeTime(db.Model):
     flexi = db.Column(db.String)
     last_updated = db.Column(DateTime)
     created = db.Column(db.Date)
+    employee = db.relationship(Employee, backref='time')
 
     def __repr__(self):
-        return '<employee_time {}>'.format(self.flexi_total)
+        return '<employee_time {}>'.format(self.flexi)
 
     def get_flexi(self):
         hours, minutes = current.split(':')
@@ -83,6 +87,7 @@ class TimeRecord(db.Model):
     time_worked = db.Column(db.Time, nullable=True)
     sufficient = db.Column(db.String, nullable=True)
     absent = db.Column(db.String, nullable=True)
+    employee = db.relationship(Employee, backref='time records')
 
     def __repr__(self):
         return '<time_record {}>'.format(self.date)

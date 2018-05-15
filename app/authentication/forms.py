@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
+#from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 from app.models import Employee
 
@@ -48,6 +49,11 @@ class RegisterEmployeeForm(FlaskForm):
         if not any(char.isdigit() for char in password.data):
             raise ValidationError('Password must contain atleast 1 number.')
 
+#class UsersForm(FlaskForm):
+#    user_list = QuerySelectField(
+#        'Choose User',
+#        query_factory=lambda: Employee.query.all())
+#    submit = SubmitField('Delete')
 
 class ResetPasswordRequestForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
