@@ -23,7 +23,7 @@ def login():
         db.session.commit()
         # Commit admin account to db so we can retrieve the employee_id to enter into employee_time.
         employeetime = EmployeeTime(employee_id = admin.get_id(), hours_a_week = 0,
-            hours_a_day = '00:00' , flexi = '00:00')
+            hours_a_day = '00:00' , flexi = '00:00', created = datetime.now().date())
         db.session.add(employeetime)
         db.session.commit()
     if form.validate_on_submit():
