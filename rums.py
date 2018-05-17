@@ -2,7 +2,8 @@ from app import create_app, db, admin
 from app.models import Employee, EmployeeTime, TimeRecord
 from flask_login import current_user
 from flask_admin.contrib.sqla import ModelView
-from flask import render_template
+from flask.ext.admin.menu import MenuLink
+from flask import render_template, url_for
 
 app = create_app()
 
@@ -40,7 +41,7 @@ class EmployeeTimeView(ModelView):
     def inaccessible_callback(self, name, **kwargs):
         # redirect to login page if user doesn't have access
         return redirect(url_for('login', next=request.url))
-        
+
     can_view_details = True
     can_create = False
 
@@ -60,9 +61,14 @@ class TimeRecordView(ModelView):
     can_view_details = True
     can_create = False
 
+
 admin.add_view(EmployeeView(Employee, db.session))
 admin.add_view(EmployeeTimeView(EmployeeTime, db.session))
 admin.add_view(TimeRecordView(TimeRecord, db.session))
+with app.app_context(), app.test_request_context():
+    admin.add_link(MenuLink(name='back to RUMS', category='', url=url_for('main.index')))
+
+
 
 @app.shell_context_processor
 def make_shell_context():
