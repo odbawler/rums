@@ -2,7 +2,7 @@ from app import create_app, db, admin
 from app.models import Employee, EmployeeTime, TimeRecord
 from flask_login import current_user
 from flask_admin.contrib.sqla import ModelView
-from flask_admin.menu import MenuLink
+#from flask_admin.menu import MenuLink
 from flask import render_template, url_for
 
 app = create_app()
@@ -65,8 +65,8 @@ class TimeRecordView(ModelView):
 admin.add_view(EmployeeView(Employee, db.session))
 admin.add_view(EmployeeTimeView(EmployeeTime, db.session))
 admin.add_view(TimeRecordView(TimeRecord, db.session))
-with app.app_context(), app.test_request_context():
-    admin.add_link(MenuLink(name='back to RUMS', category='', url=url_for('main.index')))
+#with app.app_context(), app.test_request_context():
+    #admin.add_link(MenuLink(name='back to RUMS', category='', url=url_for('main.index')))
 
 
 
