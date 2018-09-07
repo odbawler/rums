@@ -2,7 +2,7 @@ from app import create_app, db, admin
 from app.models import Employee, EmployeeTime, TimeRecord
 from flask_login import current_user
 from flask_admin.contrib.sqla import ModelView
-from flask_admin import *
+from flask_admin.menu import MenuLink
 from flask import render_template, url_for
 
 app = create_app()
